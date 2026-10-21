@@ -80,7 +80,7 @@ const newCourse = reactive({
 
 async function loadCourses() {
   try {
-    const response = await axios.get(`${API_URL}/courses`)
+    const response = await axios.get(`${API_URL}/api/courses`)
     courses.value = response.data
     listMessage.value = ''
   } catch (error) {
@@ -95,7 +95,7 @@ async function addCourse() {
   formMessage.value = ''
 
   try {
-    const response = await axios.post(`${API_URL}/courses`, {
+    const response = await axios.post(`${API_URL}/api/courses`, {
       courseId: newCourse.courseId,
       name: newCourse.name
     })
@@ -127,7 +127,7 @@ async function deleteCourse(courseId) {
 
   try {
     const response = await axios.delete(
-      `${API_URL}/courses/${encodeURIComponent(courseId)}`
+      `${API_URL}/api/courses/${encodeURIComponent(courseId)}`
     )
 
     formMessage.value = response.data.message

@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+const frontendPath = path.join(__dirname, '../frontend-vue/dist');
 
 // Student database model
 const studentSchema = new mongoose.Schema({
@@ -146,7 +148,7 @@ const courseSchema = new mongoose.Schema({
 const Course = mongoose.model('Course', courseSchema);
 
 // List all courses
-app.get('/courses', async (req, res) => {
+app.get('/api/courses', async (req, res) => {
     try {
         const courses = await Course.find().sort({ courseId: 1 });
         res.send(courses);
@@ -157,7 +159,7 @@ app.get('/courses', async (req, res) => {
 });
 
 // Add a course
-app.post('/courses', async (req, res) => {
+app.post('/api/courses', async (req, res) => {
     try {
         const { courseId, name } = req.body;
 
@@ -196,7 +198,7 @@ app.post('/courses', async (req, res) => {
 });
 
 // Delete a course and its enrollments
-app.delete('/courses/:courseId', async (req, res) => {
+app.delete('/api/courses/:courseId', async (req, res) => {
     try {
         const course = await Course.findOne({
             courseId: req.params.courseId
@@ -249,7 +251,7 @@ enrollmentSchema.index(
 const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
 
 // List all enrollments
-app.get('/enrollments', async (req, res) => {
+app.get('/api/enrollments', async (req, res) => {
     try {
         const enrollments = await Enrollment.find()
             .populate('student', 'name id')
@@ -265,7 +267,7 @@ app.get('/enrollments', async (req, res) => {
 });
 
 // Enroll a student in a course
-app.post('/enrollments', async (req, res) => {
+app.post('/api/enrollments', async (req, res) => {
     try {
         const { studentId, courseId } = req.body;
 
@@ -341,6 +343,16 @@ app.get('/courses/:courseId/roster', async (req, res) => {
             error: 'Could not load course roster'
         });
     }
+});
+app.use(express.static(frontendPath));
+
+// Send Vue's index.html for frontend routes and page refreshes
+app.get(/.*/, (req, res, next) => {
+    res.sendFile(path.join(frontendPath, 'index.html'), error => {
+        if (error) {
+            next(error);
+        }
+    });
 });
 // Connect to MongoDB before starting the server
 const PORT = process.env.PORT || 3000;

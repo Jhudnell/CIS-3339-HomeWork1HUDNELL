@@ -105,7 +105,7 @@ async function loadOptions() {
   try {
     const [studentResponse, courseResponse] = await Promise.all([
       axios.get(`${API_URL}/students`),
-      axios.get(`${API_URL}/courses`)
+      axios.get(`${API_URL}/api/courses`)
     ])
 
     students.value = studentResponse.data
@@ -122,7 +122,7 @@ async function enrollStudent() {
   formMessage.value = ''
 
   try {
-    const response = await axios.post(`${API_URL}/enrollments`, {
+    const response = await axios.post(`${API_URL}/api/enrollments`, {
       studentId: selectedStudent.value,
       courseId: selectedCourse.value
     })
