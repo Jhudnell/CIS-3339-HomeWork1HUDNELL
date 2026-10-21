@@ -2,9 +2,12 @@
 node_modules/
 **/node_modules/
 
-# Environment variables and secrets
+# Environment files are ignored by default
 .env
 **/.env
+
+# Allow the required local MongoDB configuration
+!backend/.env
 
 # Build output
 dist/
